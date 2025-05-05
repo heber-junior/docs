@@ -84,9 +84,12 @@ namespace WebDocs
         {
             if (env.IsDevelopment())
                 options.Debug = true;
+            options.Config.UseRouter = false;
             options.Config.UsePipes = true;
             options.Config.CreateTheme("", "");
             options.Config.CreateTheme("Dark", "dark");
+            options.Config.CreateView("Mobile", "mobile", "{{__browser.Width}} < 768");
+            options.Config.CreateView("Web", "default");
             options.Config.StorageErrors = "errors";
             options.Config.ValidatorUncheckedClass = "ppValidationUnchecked";
             options.Config.ValidatorValidClass = "ppValidatorValid";
@@ -94,6 +97,10 @@ namespace WebDocs
             options.Config.OnError = "UncheckItemField({{dkLayoutMenuState.menu}});ClearItemField({{taError.Container}});ClearSector(rainbow);ClearSector(footer);UpdateSector(content,/app/error/index.html,Error,true,true,{{tabError.Container}});UncheckDataField(dkTabs,Selected,false);AddDataItem(dkTabs,{{tabError}})";
             options.Config.LoadComponents(string.Format("{0}{1}components", env.WebRootPath, Path.AltDirectorySeparatorChar), "~/components");
             options.Config.HandlerCustom = h => HandlerCustom(h, menu);
+            options.PollingEvent += Polling;
+            options.Config.CreateRoute("^/function/(?<id>\\w+)$", "ClearSector(content);UpdateSector(content,~/app/shared/function.html)");
+            options.Config.CreateRoute("^/doc/(?<id>\\w+)$", "ClearSector(content);UpdateSector(content,~/app/shared/doc.html)");
+            options.Config.CreateRoute("^/$", "UpdateSector(content,~/app/menu/0000%20-%20Drapo.html)");
             this._options = options;
         }
 
@@ -124,6 +131,12 @@ namespace WebDocs
                     return (itemChild);
             }
             return (null);
+        }
+
+        private async Task<string> Polling(string domain, string connectionId, string key)
+        {
+            string hash = Math.Ceiling((decimal)(DateTime.Now.Second / 5)).ToString();
+            return (await Task.FromResult<string>(hash));
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <script src="/drapo.js"></script>
-<div d-sector-parent-url="~/app/shared/layout.html" d-sector-parent="content">
+<div>
     <div>
         <h2>query</h2>
         <p>The type query can be used to join one or more storage in a single one chossing the columns that you want.</p>
@@ -263,6 +263,19 @@
             <div>
                 <div d-for="person in personsQuery">
                     <span>{{person.Name}}</span>
+                    <br />
+                </div>
+            </div>
+        </d-sample>
+        <br />
+        <p>You can also use LIKE in query</p>
+        <d-sample>
+            <div d-dataKey="objects1" d-dataUrlGet="~/api/Sample/GetArray?start=0&length=15"></div>
+            <div d-dataKey="objects2" d-dataUrlGet="~/api/Sample/GetArray?start=0&length=15"></div>
+            <div d-dataKey="objectsQuery" d-dataType="query" d-dataValue="SELECT O1 AS Code1, O2 as Code2 FROM objects1 AS O1 OUTER JOIN objects2 AS O2 ON O1 = O2 WHERE O1 LIKE '1%'"></div>
+            <div>
+                <div d-for="object in objectsQuery">
+                    <span>{{object.Code1}}</span>
                     <br />
                 </div>
             </div>

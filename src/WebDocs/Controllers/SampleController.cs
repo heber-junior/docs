@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sysphera.Middleware.Drapo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,6 +69,12 @@ namespace WebDocs.Controllers
         }
 
         [HttpGet]
+        public string GetDate()
+        {
+            return (DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss.fff tt"));
+        }
+
+        [HttpGet]
         public List<NodeVM> GetNames() 
         {
             List<NodeVM> namesVM = new List<NodeVM>();
@@ -104,6 +111,26 @@ namespace WebDocs.Controllers
                 namesProfession.Add(nameProfession);
             }
             return (namesProfession);
+        }
+
+        [HttpPost]
+        public DrapoObject GetCookieValues([FromBody] Dictionary<string, string> values, bool useHeaders = false)
+        {
+            DrapoObject result = new DrapoObject();
+            if (values != null)
+            {
+                foreach (KeyValuePair<string, string> entry in values)
+                    result.Properties.Add(entry.Key, entry.Value);
+            }
+            if (useHeaders)
+            {
+                foreach (var header in this.Request.Headers)
+                {
+                    if (header.Key.Contains("custom"))
+                        result.Properties.Add(header.Key, header.Value.ToString());
+                }
+            }
+            return (result);
         }
 
         [HttpGet]
